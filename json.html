@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Untitled Document</title>
+  </head>
+
+  <body>
+    <h3 id="timeNow"></h3>
+    <h3>ARRIVALS</h3>
+    <div id="displayArrivals"></div>
+    <h3>DEPARTURES</h3>
+    <div id="displayDepartures"></div>
+
+    <script>
+      var counter = 0;
+      const intervalID = setInterval(refreshData, 60000); // refresh every 1 minutes
+
+      const displayDate = document.getElementById("timeNow");
+      const jsonDisplayArrivals = document.getElementById("displayArrivals");
+      const jsonDisplayDepartures =
+        document.getElementById("displayDepartures");
+      //const corsOrigin= "https://cors-anywhere.herokuapp.com/";
+
+      const urlArrivals = "https://sck.simpleway.cloud/apiv1/public/data-feed/arrivals";
+      const urlDepartures =
+        "https://sck.simpleway.cloud/apiv1/public/data-feed/departures";
+
+      console.log(urlArrivals);
+      console.log(urlDepartures)
+
+      function arrivals() {
+        fetch(urlArrivals, {
+          method: "GET",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            const jsonData = JSON.stringify(data, null, 2); // Beautify JSON with 2 spaces for indentation
+            jsonDisplayArrivals.innerHTML = `<pre>${jsonData}</pre>`;
+          })
+          .catch((err) => console.log(err));
+      }
+
+      function departures() {
+        fetch(urlDepartures, {
+          method: "GET",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            const jsonData = JSON.stringify(data, null, 2); // Beautify JSON with 2 spaces for indentation
+            jsonDisplayDepartures.innerHTML = `<pre>${jsonData}</pre>`;
+          })
+          .catch((err) => console.log(err));
+      }
+
+      function refreshData() {
+        counter++;
+        console.log("refresh:", counter);
+        //
+        let d = new Date();
+        displayDate.innerHTML = `<pre>${d}</pre>`;
+        // +d.getDate(),'<br>Dia de la semana: ‘+d.getDay(),'<br>Mes (0 al 11): ‘+d.getMonth(),'<br>Año:’+d.getFullYear(),'<br>Hora:’+d.getHours(),'<br>HoraUTC: ‘+d.getUTCHours(),'<br>Minutos: ‘+d.getMinutes(),'<br>Segundos: ‘+d.getSeconds());
+        //
+
+        arrivals();
+        departures();
+      }
+      refreshData();
+    </script>
+  </body>
+</html>
